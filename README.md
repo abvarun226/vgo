@@ -2,9 +2,21 @@
 
 ## How to setup and use vgo?
 
+### Prerequisites
 ```
-# install vgo from source
-$ go install github.com/abvarun226/vgo@latest
+$ sudo mkdir /usr/local/go
+$ sudo chown ${USER} /usr/local/go
+
+$ echo "PATH=/usr/local/go/active/bin:\${PATH}" >> ~/.zshrc
+# OR
+$ echo "PATH=/usr/local/go/active/bin:\${PATH}" >> ~/.bashrc
+```
+
+### Install and Setup vgo
+```
+# download vgo from release packages https://github.com/abvarun226/vgo/releases
+$ tar -xvzf vgo-v1.0.1-darwin-amd64.tar.gz
+$ sudo mv vgo /usr/local/bin/
 
 # run this to enable command completion in shell
 $ COMP_INSTALL=1 COMP_YES=1 vgo
@@ -15,7 +27,10 @@ $ source ~/.zshrc
 
 # For bash shell, open new terminal OR run below command
 $ source ~/.bashrc
+```
 
+### Use vgo
+```
 # download a new version (1.19) for M1 mac (darwin/arm64)
 $ vgo download -version 1.19 -platform darwin -arch arm64
 
