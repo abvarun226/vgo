@@ -6,6 +6,7 @@ import (
 	"flag"
 	"fmt"
 	"io/ioutil"
+	"math/rand"
 	"net/http"
 	"os"
 	"os/exec"
@@ -51,6 +52,12 @@ delete <version>: Delete an installed go version
 set <version>: Set the active go version
   <version> is the version number to be activated
 `
+)
+
+var (
+	availablePlatforms = []string{"darwin", "linux", "freebsd"}
+	availableArch      = []string{"amd64", "arm64", "386", "armv6l", "ppc64le", "s390x"}
+	letters            = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
 )
 
 func deleteVersion(version string) {
@@ -138,6 +145,14 @@ func getActiveVersion() (string, error) {
 }
 
 func download(version, platform, arch string) error {
+	if platform == "windows" {
+		return fmt.Errorf("unsupported platform")
+	}
+
+	if !searchStrings(availablePlatforms, platform) || !searchStrings(availableArch, arch) {
+		return fmt.Errorf("unsupported platform or arch, supported platform=%v and arch=%v", availablePlatforms, availableArch)
+	}
+
 	versions, errList := versionList()
 	if errList != nil {
 		return fmt.Errorf("failed to download version: %w", errList)
@@ -202,8 +217,13 @@ func main() {
 			"delete": {
 				Args: predict.Set(versions),
 			},
-			"list":     {},
-			"download": {},
+			"list": {},
+			"download": {
+				Flags: map[string]complete.Predictor{
+					"platform": predict.Set(availablePlatforms),
+					"arch":     predict.Set(availableArch),
+				},
+			},
 		},
 	}
 
@@ -259,4 +279,29 @@ func main() {
 	}
 
 	flag.Parse()
+}
+
+func randString(n int) string {
+	b := make([]rune, n)
+	for i := range b {
+		b[i] = letters[rand.Intn(len(letters))]
+	}
+	return string(b)
+}
+
+func pathExists(path string) bool {
+	if _, err := os.Stat(path); err == nil {
+		return true
+	}
+
+	return false
+}
+
+func searchStrings(hay []string, needle string) bool {
+	for _, h := range hay {
+		if h == needle {
+			return true
+		}
+	}
+	return false
 }
