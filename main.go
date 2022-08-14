@@ -185,6 +185,7 @@ func download(version, platform, arch string) error {
 }
 
 func checkPath() {
+	os.Mkdir(godir, 0755)
 	path, _ := os.LookupEnv("PATH")
 	if !strings.Contains(path, goSymLink) {
 		fmt.Println(instructions)

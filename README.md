@@ -4,7 +4,7 @@
 
 ```
 # install vgo from source
-$ go install github.com/abvarun226/vgo
+$ go install github.com/abvarun226/vgo@latest
 
 # run this to enable command completion in shell
 $ COMP_INSTALL=1 COMP_YES=1 vgo
